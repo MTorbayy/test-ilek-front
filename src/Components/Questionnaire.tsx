@@ -1,5 +1,11 @@
 import {useEffect, useState} from "react";
+import Question from './Question'
 
+interface Question {
+    answers: [],
+    id: number,
+    question: string
+}
 
 function Questionnaire () {
     const [questions, setQuestions] = useState<any>();
@@ -12,6 +18,7 @@ function Questionnaire () {
                 if (data !== undefined && data.length > 0) {
                     const mixedQuestions = mixArray([...data]);
                     setQuestions(mixedQuestions);
+                    console.log(questions)
                 }
             })
     }, []);
@@ -42,7 +49,9 @@ function Questionnaire () {
     return (
         <form className="App" onSubmit={handleSubmit}>
             <h1>Teste tes connaissances</h1>
-            <p>{questions != undefined ? questions[0].question : "loading ..."}</p>
+            {questions != undefined ? (questions.map((question: Question) => {
+                return <Question key={question.id} question={question} />
+            })) : ("Loading...")}
             <button type="submit">Valider</button>
             <p>Votre score est de {score}</p>
         </form>
