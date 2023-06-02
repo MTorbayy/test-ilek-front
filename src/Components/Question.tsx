@@ -1,4 +1,4 @@
-import Answer from './Answer'
+import Answers from './Answer'
 
 interface QuestionProps {
     question: {
@@ -8,18 +8,12 @@ interface QuestionProps {
     }
 }
 
-interface Answer {
-    id: number,
-    answers: []
-}
-
 function Question ({ question }: QuestionProps) {
+    console.log(question.answers)
     return(
         <div>
             <p>{question.question}</p>
-            {question.answers != undefined ? (question.answers.map((answer: Answer) => {
-                return <Answer answer={answer} />
-            })) : ("Loading...")}
+            {question.answers != undefined ? (<Answers answers={question.answers} />) : ("Loading...")}
         </div>
     )
 }
