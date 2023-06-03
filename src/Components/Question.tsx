@@ -12,7 +12,6 @@ interface QuestionInterface {
 interface Answer {
     id: number,
     answer: string,
-    isCorrect: boolean,
     selected?: boolean
 }
 

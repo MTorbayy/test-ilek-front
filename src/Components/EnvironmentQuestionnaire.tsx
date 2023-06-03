@@ -11,11 +11,10 @@ interface Question {
 interface Answer {
     id: number,
     answer: string,
-    isCorrect: boolean,
     selected: boolean
 }
 
-function Questionnaire () {
+function EnvironmentQuestionnaire () {
     const [questions, setQuestions] = useState<Question[]>([]);
     const [showScore, setShowScore] = useState<boolean>(false);
     const [score, setScore] = useState<number>(0);
@@ -30,35 +29,35 @@ function Questionnaire () {
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        // calculateScore();
-        // setShowScore(true);
-        const answersToCheck = questions.map(question => ({
-            questionId: question.id,
-            answerId: question.answers.find(answer => answer.selected)?.id
-        }))
+        const answersToCheck: any[] = [];
 
-        fetch("/check_environment_questions", {
+        questions.map(question => {
+            question.answers.map(answer => {
+                if(answer.selected) {
+                    let checkAnswer = {
+                        questionId: question.id,
+                        answerId: answer.id
+                    }
+                    answersToCheck.push(checkAnswer)
+                }
+            })
+        })
+
+        fetch("/check_questions", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(answersToCheck)
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                console.log(data)
+            body: JSON.stringify({
+                answersToCheck,
+                questionnaire: "environment"
             })
-    }
-
-    const calculateScore = () => {
-        let totalScore = 0;
-        questions.forEach(question => {
-            const selectedAnswer = question.answers.find(answer => answer.selected);
-            if(selectedAnswer && selectedAnswer.isCorrect) {
-                totalScore++
-            }
         })
-        setScore(totalScore)
+        .then((response) => response.json())
+        .then((data) => {
+            setScore(data)
+            setShowScore(true);
+        })
     }
 
     const handleAnswer = (questionId: number, answerId: number) => {
@@ -97,4 +96,4 @@ function Questionnaire () {
     );
 }
 
-export default Questionnaire;
+export default EnvironmentQuestionnaire;

@@ -11,7 +11,6 @@ interface Question {
 interface Answer {
     id: number,
     answer: string,
-    isCorrect: boolean,
     selected: boolean
 }
 
@@ -30,19 +29,35 @@ function MitigationQuestionnaire () {
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        calculateScore();
-        setShowScore(true);
-    }
+        const answersToCheck: any[] = [];
 
-    const calculateScore = () => {
-        let totalScore = 0;
-        questions.forEach(question => {
-            const selectedAnswer = question.answers.find(answer => answer.selected);
-            if(selectedAnswer && selectedAnswer.isCorrect) {
-                totalScore++
-            }
+        questions.map(question => {
+            question.answers.map(answer => {
+                if(answer.selected) {
+                    let checkAnswer = {
+                        questionId: question.id,
+                        answerId: answer.id
+                    }
+                    answersToCheck.push(checkAnswer)
+                }
+            })
         })
-        setScore(totalScore)
+
+        fetch("/check_questions", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                answersToCheck,
+                questionnaire: "mitigation"
+            })
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                setScore(data)
+                setShowScore(true);
+            })
     }
 
     const handleAnswer = (questionId: number, answerId: number) => {
@@ -76,7 +91,7 @@ function MitigationQuestionnaire () {
             })) : ("Loading...")}
             <button type="submit">Valider</button>
             {showScore && <p>Votre score est de {score}</p>}
-            <Link to="/mitigation-questionnaire" >Passe un autre quizz pour découvrir comment tu peux aider à protéger l'environnement</Link>
+            <Link to="/" >Revenir au précédent questionnaire</Link>
         </form>
     );
 }
