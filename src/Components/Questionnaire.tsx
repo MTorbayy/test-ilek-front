@@ -75,9 +75,8 @@ function Questionnaire () {
                 />
             })) : ("Loading...")}
             <button type="submit">Valider</button>
+            {showScore && <p>Votre score est de {score}</p>}
             <Link to="/mitigation-questionnaire" >Passe un autre quizz pour découvrir comment tu peux aider à protéger l'environnement</Link>
-            {showScore && <p>Votre score est de {score}</p>
-            }
         </form>
     );
 }
