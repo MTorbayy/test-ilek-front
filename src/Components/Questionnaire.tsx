@@ -30,8 +30,24 @@ function Questionnaire () {
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        calculateScore();
-        setShowScore(true);
+        // calculateScore();
+        // setShowScore(true);
+        const answersToCheck = questions.map(question => ({
+            questionId: question.id,
+            answerId: question.answers.find(answer => answer.selected)?.id
+        }))
+
+        fetch("/check_environment_questions", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(answersToCheck)
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data)
+            })
     }
 
     const calculateScore = () => {
