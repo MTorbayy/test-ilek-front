@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
-import Question from './Question'
-import {bindReporter} from "web-vitals/dist/modules/lib/bindReporter";
+import { Link } from 'react-router-dom'
+import Question from './Question';
 
 interface Question {
     answers: Answer[],
@@ -75,6 +75,7 @@ function Questionnaire () {
                 />
             })) : ("Loading...")}
             <button type="submit">Valider</button>
+            <Link to="/mitigation-questionnaire" >Passe un autre quizz pour découvrir comment tu peux aider à protéger l'environnement</Link>
             {showScore && <p>Votre score est de {score}</p>
             }
         </form>
