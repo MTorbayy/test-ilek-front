@@ -1,19 +1,39 @@
-import Answers from './Answer'
-
 interface QuestionProps {
-    question: {
-        answers: [],
-        id: number,
-        question: string
-    }
+    question: QuestionInterface,
+    handleAnswer: (questionId: number, answerId: number) => void;
 }
 
-function Question ({ question }: QuestionProps) {
-    console.log(question.answers)
+interface QuestionInterface {
+    answers: Answer[],
+    id: number,
+    question: string
+}
+
+interface Answer {
+    id: number,
+    answer: string,
+    isCorrect: boolean,
+    selected?: boolean
+}
+
+function Question ({ question, handleAnswer }: QuestionProps) {
+
     return(
         <div>
             <p>{question.question}</p>
-            {question.answers != undefined ? (<Answers answers={question.answers} />) : ("Loading...")}
+            {question.answers.map((answer: Answer) => {
+                return <li key={answer.id}>
+                    <label>
+                        <input
+                            type="radio"
+                            value={answer.id}
+                            onChange={() => handleAnswer(question.id, answer.id)}
+                            checked={answer.selected}
+                        />
+                    </label>
+                    {answer.answer}
+                </li>
+            })}
         </div>
     )
 }

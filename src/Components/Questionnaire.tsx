@@ -1,59 +1,82 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import Question from './Question'
+import {bindReporter} from "web-vitals/dist/modules/lib/bindReporter";
 
 interface Question {
-    answers: [],
+    answers: Answer[],
     id: number,
     question: string
 }
 
+interface Answer {
+    id: number,
+    answer: string,
+    isCorrect: boolean,
+    selected: boolean
+}
+
 function Questionnaire () {
-    const [questions, setQuestions] = useState<any>();
+    const [questions, setQuestions] = useState<Question[]>([]);
+    const [showScore, setShowScore] = useState<boolean>(false);
     const [score, setScore] = useState<number>(0);
 
     useEffect(() => {
         fetch("/environment_questions")
             .then((response) => response.json())
             .then((data) => {
-                if (data !== undefined && data.length > 0) {
-                    const mixedQuestions = mixArray([...data]);
-                    setQuestions(mixedQuestions);
-                    console.log(questions)
-                }
+                setQuestions(data)
             })
     }, []);
 
-    const mixArray = (array: any[]): any[] => {
-        const newArray = [...array];
-        const mixedArray: any[] = [];
-
-        while(mixedArray.length <= 5 && newArray.length > 0) {
-            const randomIndex = Math.floor(Math.random() * newArray.length); //Génère un index aléatoire entre 0 et newArray.length
-            const randomElement = newArray[randomIndex];
-
-            if(!mixedArray.includes(randomElement)) {
-                mixedArray.push(randomElement)
-            }
-
-            newArray.splice(randomIndex, 1);
-        }
-
-        return mixedArray;
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        calculateScore();
+        setShowScore(true);
     }
 
-    const handleSubmit = () => {
-        //Logique pour calculer le score ?
-        setScore(100);
+    const calculateScore = () => {
+        let totalScore = 0;
+        questions.forEach(question => {
+            const selectedAnswer = question.answers.find(answer => answer.selected);
+            if(selectedAnswer && selectedAnswer.isCorrect) {
+                totalScore++
+            }
+        })
+        setScore(totalScore)
+    }
+
+    const handleAnswer = (questionId: number, answerId: number) => {
+        const updatedQuestions = questions.map((question) => {
+            if(question.id === questionId) {
+                const updatedAnswers = question.answers.map(answer => {
+                    if(answer.id === answerId) {
+                        return {...answer, selected: true}
+                    }
+                    return {...answer, selected: false}
+                });
+
+                return {...question, answers: updatedAnswers};
+            }
+
+            return question;
+        })
+
+        setQuestions(updatedQuestions)
     }
 
     return (
         <form className="App" onSubmit={handleSubmit}>
             <h1>Teste tes connaissances</h1>
-            {questions != undefined ? (questions.map((question: Question) => {
-                return <Question key={question.id} question={question} />
+            {questions.length > 0 ? (questions.map((question: Question) => {
+                return <Question
+                    key={question.id}
+                    question={question}
+                    handleAnswer={handleAnswer}
+                />
             })) : ("Loading...")}
             <button type="submit">Valider</button>
-            <p>Votre score est de {score}</p>
+            {showScore && <p>Votre score est de {score}</p>
+            }
         </form>
     );
 }
