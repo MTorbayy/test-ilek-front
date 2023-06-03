@@ -88,7 +88,7 @@ function MitigationQuestionnaire () {
                     question={question}
                     handleAnswer={handleAnswer}
                 />
-            })) : ("Loading...")}
+            })) : (<div>Loading...</div>)}
             <button type="submit">Valider</button>
             {showScore && <p>Votre score est de {score}</p>}
             <Link to="/" >Revenir au précédent questionnaire</Link>
