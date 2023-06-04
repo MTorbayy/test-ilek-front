@@ -1,6 +1,6 @@
 interface QuestionProps {
     question: QuestionInterface,
-    handleAnswer: (questionId: number, answerId: number) => void;
+    handleAnswer: (questionId: number, answerId: number) => void
 }
 
 interface QuestionInterface {
@@ -12,7 +12,7 @@ interface QuestionInterface {
 interface Answer {
     id: number,
     answer: string,
-    selected?: boolean
+    selected: boolean
 }
 
 function Question ({ question, handleAnswer }: QuestionProps) {
