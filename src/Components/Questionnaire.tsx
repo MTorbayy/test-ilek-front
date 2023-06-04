@@ -87,8 +87,8 @@ function Questionnaire({ questionnaireData, questionnaireType, linkTo, linkText 
     }
 
     return (
-        <form className="App" onSubmit={handleSubmit}>
-            <h1>Teste tes connaissances</h1>
+        <form onSubmit={handleSubmit}>
+            <h1 className="text-center display-1">Teste tes connaissances</h1>
             {questions.length > 0 ? (questions.map((question: Question) => {
                 return <Question
                     key={question.id}
@@ -96,9 +96,11 @@ function Questionnaire({ questionnaireData, questionnaireType, linkTo, linkText 
                     handleAnswer={handleAnswer}
                 />
             })) : (<div>Loading...</div>)}
-            <button type="submit">Valider</button>
-            {showScore && <p>Votre score est de {score}</p>}
-            <Link to={linkTo}>{linkText}</Link>
+            <div className="mb-5 ms-4">
+                <button className="btn btn-lg btn-outline-success me-2 mt-4" type="submit">Valider</button>
+                <Link className="btn btn-outline-info btn-lg mt-4" to={linkTo}>{linkText}</Link>
+                {showScore && <h4 className="mt-3">Votre score est de {score}</h4>}
+            </div>
         </form>
     );
 }
